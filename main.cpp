@@ -41,9 +41,6 @@ int main(int argc, char **argv) {
 
     int numpens = 1;
 
-    // koch island
-    // exunit::lsystem::DOLSystem system("F-F-F-F", {"F=>F-F+F+FF-F-F+F"});
-
     {
 		PNGTurtle turtle(numpens, width, height, startx, starty, 90.0f, 50);
 		turtle.SetPenColor(0, 255, 0, 0);
@@ -122,6 +119,40 @@ int main(int argc, char **argv) {
 		turtle.SetPenPos(0, 10, height - 100);
 		turtle.Render(system.GetState());
 		turtle.Save("sierpinksi-gasket.png");
+	}
+
+	{
+		PNGTurtle turtle(1, width, height, startx, starty, 60.0f, 50);
+		turtle.SetPenColor(0, 255, 0, 0);
+
+		// hexagon-gosper curve (1.11a)
+		// F == Fl
+		// I == Fr
+		exunit::lsystem::DOLSystem system("F", { "F=>F+I++I-F--FF-I+", "I=>-F+II++I+F--F-I" });
+		iterations = 4;
+		system.Iterate(iterations);
+		turtle.Reset();
+		turtle.SetD(15);
+		turtle.SetPenPos(0, 650, height - 100);
+		turtle.Render(system.GetState());
+		turtle.Save("hexagon-gosper.png");
+	}
+
+	{
+		PNGTurtle turtle(1, width, height, startx, starty, 90.0f, 50);
+		turtle.SetPenColor(0, 255, 0, 0);
+
+		// quadratic-gosper curve (1.11b)
+		// F == Fl
+		// I == Fr
+		exunit::lsystem::DOLSystem system("-I", { "F=>FF-I-I+F+F-I-IF+I+FFI-F+I+FF+I-FI-I-F+F+II-", "I=>+FF-I-I+F+FI+F-II-F-I+FII-F-IF+F+I-I-F+F+II" });
+		iterations = 2;
+		system.Iterate(iterations);
+		turtle.Reset();
+		turtle.SetD(20);
+		turtle.SetPenPos(0, 100, 100);
+		turtle.Render(system.GetState());
+		turtle.Save("quadratic-gosper.png");
 	}
 
 }
