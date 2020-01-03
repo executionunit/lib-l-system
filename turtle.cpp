@@ -6,18 +6,18 @@
 constexpr float radians(float deg) { return deg * (float)M_PI / 180.0f; }
 
 Turtle::Turtle(uint32_t numpens, uint32_t width, uint32_t height, uint32_t startposx, uint32_t startposy, float _angle, float _d)
-	: mWidth(width), mHeight(height), mTurnAngle(radians(_angle)), d(_d) {
+	: mWidth(width), mHeight(height), mTurnAngle(radians(_angle)), mEdgeLength(_d) {
 
 	mPens.resize(numpens, { true, (float)startposx, (float)startposy, 0, {255, 0, 0} });
 
 }
 
 float Turtle::GetD() const {
-	return d;
+	return mEdgeLength;
 }
 
 void Turtle::SetD(float newd) {
-	d = newd;
+	mEdgeLength = newd;
 }
 
 void Turtle::SetPenPos(uint32_t penidx, int x, int y) {
@@ -38,8 +38,8 @@ void Turtle::MoveForward(uint32_t penidx) {
 	if (penidx < mPens.size()) {
 		auto &pen = mPens[penidx];
 
-		float newx = pen.xpos + d * cosf(pen.angle);
-		float newy = pen.ypos + d * sinf(pen.angle);
+		float newx = pen.xpos + mEdgeLength * cosf(pen.angle);
+		float newy = pen.ypos + mEdgeLength * sinf(pen.angle);
 
 		if (pen.pendown) {
 			DrawLine((int)pen.xpos, (int)pen.ypos, (int)newx, (int)newy, pen.rgb);

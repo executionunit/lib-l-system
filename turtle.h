@@ -30,6 +30,7 @@ protected:
     uint32_t mWidth;
     uint32_t mHeight;
     float    mTurnAngle;
+	float mEdgeLength;
 
 	struct PenState {
 		bool  pendown{ true };
@@ -41,7 +42,7 @@ protected:
 
 	std::vector<PenState> mPens;
 
-    float d;
+    
 };
 
 #endif // EXUNIT_LSYSTEMLIB_TURTLE_H
