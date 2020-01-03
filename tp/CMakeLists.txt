@@ -1,6 +1,8 @@
 # Third Party code
 
 if(LSYSTEM_BUILD_TESTS)
+    set(DOCTEST_WITH_MAIN_IN_STATIC_LIB OFF CACHE INTERNAL "")
+    set(DOCTEST_WITH_TESTS OFF CACHE INTERNAL "")
     add_subdirectory(doctest)
 endif()
 
