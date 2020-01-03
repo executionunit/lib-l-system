@@ -20,11 +20,14 @@ void PNGTurtle::Render(const char *s) {
         return;
     }
 
+
     while (*s != '\0') {
         char c = *s;
 
         switch (c) {
-        case 'F':
+		case 'I':
+			/* deliberate fallthrough */
+		case 'F':
             MoveForward(0);
             break;
         case 'f':
