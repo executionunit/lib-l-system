@@ -6,8 +6,8 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
-PNGTurtle::PNGTurtle(uint32_t width, uint32_t height, uint32_t startposx, uint32_t startposy, float _angle, float _d)
-    : Turtle(width, height, startposx, startposy, _angle, _d) {
+PNGTurtle::PNGTurtle(uint32_t numpens, uint32_t width, uint32_t height, uint32_t startposx, uint32_t startposy, float _angle, float _d)
+    : Turtle(numpens, width, height, startposx, startposy, _angle, _d) {
 
     mBuffer.reset(new uint8_t[width * height * numplanes()]);
 
@@ -24,18 +24,18 @@ void PNGTurtle::Render(const char *s) {
 
         switch (c) {
         case 'F':
-            MoveForward();
+            MoveForward(0);
             break;
         case 'f':
-            PenUp();
-            MoveForward();
-            PenDown();
+            PenUp(0);
+            MoveForward(0);
+            PenDown(0);
             break;
         case '+':
-            Turn(-mTurnAngle);
+            Turn(0, -mTurnAngle);
             break;
         case '-':
-            Turn(mTurnAngle);
+            Turn(0, mTurnAngle);
             break;
         }
 
@@ -59,9 +59,13 @@ void PNGTurtle::Clear() {
 }
 
 void PNGTurtle::Reset() {
-    Clear();
-    SetPenPos(mWidth >> 1, mHeight >> 1);
-    SetAngle(0);
+    
+	Clear();
+
+	for (uint32_t i = 0; i < GetNumPens(); ++i) {
+		SetPenPos(i, mWidth >> 1, mHeight >> 1);
+		SetAngle(i, 0);
+	}
 }
 
 void PNGTurtle::Save(const char *filename) {
@@ -72,7 +76,7 @@ void PNGTurtle::Save(const char *filename) {
     stbi_write_png(filename, mWidth, mHeight, numpl, mBuffer.get(), linestride);
 }
 
-void PNGTurtle::DrawLine(int x0, int y0, int x1, int y1) const {
+void PNGTurtle::DrawLine(int x0, int y0, int x1, int y1, uint8_t rgb[3]) const {
 
     if (x0 >= 0 && x0 < (int)mWidth && y0 >= 0 && y0 < (int)mHeight ||
         x1 >= 0 && x1 < (int)mWidth && y1 >= 0 && y1 < (int)mHeight) {
@@ -82,7 +86,7 @@ void PNGTurtle::DrawLine(int x0, int y0, int x1, int y1) const {
         int err = (dx > dy ? dx : -dy) / 2, e2;
 
         for (;;) {
-            plot(x0, y0, 255, 0, 0);
+            plot(x0, y0, rgb[0], rgb[1], rgb[2]);
             if (x0 == x1 && y0 == y1)
                 break;
             e2 = err;

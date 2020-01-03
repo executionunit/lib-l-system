@@ -41,7 +41,10 @@ int main(int argc, char **argv) {
 	int starty = height >> 1;
 	int iterations = result["iterations"].as<int>();
 
-	PNGTurtle turtle(width, height, startx, starty, 90.0f, 50);
+	int numpens = 1;
+
+	PNGTurtle turtle(numpens, width, height, startx, starty, 90.0f, 50);
+	turtle.SetPenColor(0, 255, 0, 0);
 
 	//koch island
 	//exunit::lsystem::DOLSystem system("F-F-F-F", {"F=>F-F+F+FF-F-F+F"});
@@ -53,7 +56,7 @@ int main(int argc, char **argv) {
 		system.Iterate(iterations);
 		turtle.Reset();
 		turtle.SetD(2.2f);
-		turtle.SetPenPos(200, 300);
+		turtle.SetPenPos(0, 200, 300);
 		turtle.Render(system.GetState());
 		turtle.Save("quad_koch_island.png");
 	}
@@ -66,7 +69,7 @@ int main(int argc, char **argv) {
 		system.Iterate(iterations);
 		turtle.Reset();
 		turtle.SetD(3);
-		turtle.SetPenPos(100, 100);
+		turtle.SetPenPos(0, 100, 100);
 		turtle.Render(system.GetState());
 		turtle.Save("quad_snowflake.png");
 	}
@@ -78,7 +81,7 @@ int main(int argc, char **argv) {
 		system.Iterate(iterations);
 		turtle.Reset();
 		turtle.SetD(4);
-		turtle.SetPenPos(100, height - 100);
+		turtle.SetPenPos(0, 100, height - 100);
 		turtle.Render(system.GetState());
 		turtle.Save("koch_islands.png");
 	}

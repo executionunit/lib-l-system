@@ -13,7 +13,7 @@ public:
 		return 3;
 	}
 
-	PNGTurtle(uint32_t width, uint32_t height, uint32_t startposx, uint32_t startposy, float _angle, float _d);
+	PNGTurtle(uint32_t numpens, uint32_t width, uint32_t height, uint32_t startposx, uint32_t startposy, float _angle, float _d);
 	void Save(const char *filename);
 
 	virtual void Render(const char *s);
@@ -38,7 +38,7 @@ private:
 		}
 	}
 
-	virtual void DrawLine(int x0, int y0, int x1, int y1)const override;
+	virtual void DrawLine(int x0, int y0, int x1, int y1, uint8_t rgb[3])const override;
 
 };
 
