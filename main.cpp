@@ -41,14 +41,14 @@ int main(int argc, char **argv) {
 
     int numpens = 1;
 
-    PNGTurtle turtle(numpens, width, height, startx, starty, 90.0f, 50);
-    turtle.SetPenColor(0, 255, 0, 0);
-
     // koch island
     // exunit::lsystem::DOLSystem system("F-F-F-F", {"F=>F-F+F+FF-F-F+F"});
 
     {
-        // quadratic koch island (1.3a)
+		PNGTurtle turtle(numpens, width, height, startx, starty, 90.0f, 50);
+		turtle.SetPenColor(0, 255, 0, 0);
+
+		// quadratic koch island (1.3a)
         exunit::lsystem::DOLSystem system("F-F-F-F", {"F=>F+FF-FF-F-F+F+FF-F-F+F+FF+FF-F"});
         iterations = 3;
         system.Iterate(iterations);
@@ -60,7 +60,10 @@ int main(int argc, char **argv) {
     }
 
     {
-        // quadratic snowflack curve (1.3b)
+		PNGTurtle turtle(numpens, width, height, startx, starty, 90.0f, 50);
+		turtle.SetPenColor(0, 255, 0, 0);
+		
+		// quadratic snowflack curve (1.3b)
         exunit::lsystem::DOLSystem system("-F", {"F=>F+F-F-F+F"});
         iterations = 5;
         system.Iterate(iterations);
@@ -72,7 +75,10 @@ int main(int argc, char **argv) {
     }
 
     {
-        // Islands and lakes (1.8)
+		PNGTurtle turtle(numpens, width, height, startx, starty, 90.0f, 50);
+		turtle.SetPenColor(0, 255, 0, 0);
+		
+		// Islands and lakes (1.8)
         exunit::lsystem::DOLSystem system("F+F+F+F", {"F=>F+f-FF+F+FF+Ff+FF-f+FF-F-FF-Ff-FFF", "f=>ffffff"});
         iterations = 3;
         system.Iterate(iterations);
@@ -82,4 +88,40 @@ int main(int argc, char **argv) {
         turtle.Render(system.GetState());
         turtle.Save("koch_islands.png");
     }
+
+	{
+		PNGTurtle turtle(1, width, height, startx, starty, 90.0f, 50);
+		turtle.SetPenColor(0, 255, 0, 0);
+		
+		// dragon curve (1.10a)
+		// F == Fl
+		// I == Fr
+		exunit::lsystem::DOLSystem system("F", { "F=>F+I+", "I=>-F-I" });
+		iterations = 10;
+		system.Iterate(iterations);
+		turtle.Reset();
+		turtle.SetD(15);
+		turtle.SetPenPos(0, 600, height - 400);
+		turtle.SetAngle(0, -90.0f);
+		turtle.Render(system.GetState());
+		turtle.Save("dragoncurve.png");
+	}
+
+	{
+		PNGTurtle turtle(1, width, height, startx, starty, 60.0f, 50);
+		turtle.SetPenColor(0, 255, 0, 0);
+
+		// dragon curve (1.10b)
+		// F == Fl
+		// I == Fr
+		exunit::lsystem::DOLSystem system("I", { "F=>I+F+I", "I=>F-I-F" });
+		iterations = 6;
+		system.Iterate(iterations);
+		turtle.Reset();
+		turtle.SetD(15);
+		turtle.SetPenPos(0, 10, height - 100);
+		turtle.Render(system.GetState());
+		turtle.Save("sierpinksi-gasket.png");
+	}
+
 }
