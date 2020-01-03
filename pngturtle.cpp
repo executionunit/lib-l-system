@@ -6,7 +6,8 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image_write.h"
 
-PNGTurtle::PNGTurtle(uint32_t numpens, uint32_t width, uint32_t height, uint32_t startposx, uint32_t startposy, float _angle, float _d)
+PNGTurtle::PNGTurtle(uint32_t numpens, uint32_t width, uint32_t height, uint32_t startposx, uint32_t startposy,
+                     float _angle, float _d)
     : Turtle(numpens, width, height, startposx, startposy, _angle, _d) {
 
     mBuffer.reset(new uint8_t[width * height * numplanes()]);
@@ -59,13 +60,13 @@ void PNGTurtle::Clear() {
 }
 
 void PNGTurtle::Reset() {
-    
-	Clear();
 
-	for (uint32_t i = 0; i < GetNumPens(); ++i) {
-		SetPenPos(i, mWidth >> 1, mHeight >> 1);
-		SetAngle(i, 0);
-	}
+    Clear();
+
+    for (uint32_t i = 0; i < GetNumPens(); ++i) {
+        SetPenPos(i, mWidth >> 1, mHeight >> 1);
+        SetAngle(i, 0);
+    }
 }
 
 void PNGTurtle::Save(const char *filename) {
