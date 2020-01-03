@@ -29,9 +29,9 @@ void Turtle::SetPenPos(uint32_t penidx, int x, int y) {
     }
 }
 
-void Turtle::SetAngle(uint32_t penidx, float a) {
+void Turtle::SetAngle(uint32_t penidx, float degrees) {
     if (penidx < mPens.size()) {
-        mPens[penidx].angle = 0;
+        mPens[penidx].angle = radians(degrees);
     }
 }
 

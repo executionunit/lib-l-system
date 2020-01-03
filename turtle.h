@@ -17,7 +17,7 @@ public:
     float GetD() const;
     void  SetD(float newd);
 
-    void     SetAngle(uint32_t penidx, float a);
+    void     SetAngle(uint32_t penidx, float degrees);
     void     SetPenPos(uint32_t penidx, int x, int y);
     void     MoveForward(uint32_t penidx);
     void     Turn(uint32_t penidx, float rads);
