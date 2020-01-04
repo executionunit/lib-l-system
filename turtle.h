@@ -28,6 +28,7 @@ public:
     void ResetStack(uint32_t startposx, uint32_t startposy);
 
 protected:
+
     uint32_t mWidth;
     uint32_t mHeight;
     float    mTurnAngle;
@@ -42,6 +43,10 @@ protected:
     };
 
     std::vector<PenState> mPenStack;
+
+	void PushPen();
+	void PopPen();
+
 };
 
 #endif // EXUNIT_LSYSTEMLIB_TURTLE_H

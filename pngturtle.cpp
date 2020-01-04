@@ -41,6 +41,12 @@ void PNGTurtle::Render(const char *s) {
         case '-':
             Turn(mTurnAngle);
             break;
+		case '[':
+			PushPen();
+			break;
+		case ']':
+			PopPen();
+			break;
         }
 
         ++s;

@@ -2,6 +2,7 @@
 
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include <cassert>
 
 constexpr float radians(float deg) {
     return deg * (float)M_PI / 180.0f;
@@ -75,4 +76,17 @@ void Turtle::Reset(uint32_t startposx, uint32_t startposy) {
 	Clear();
 	ResetStack(startposx, startposy);
 
+}
+
+void Turtle::PushPen() {
+	mPenStack.push_back(mPenStack.back());
+}
+
+void Turtle::PopPen() {
+	//never pop the original pen off the stack!
+	if (mPenStack.size() > 1) {
+		mPenStack.pop_back();
+		return;
+	}
+	assert(("pen stack underflow", false));
 }
