@@ -13,13 +13,12 @@ public:
 		return 3;
 	}
 
-	PNGTurtle(uint32_t numpens, uint32_t width, uint32_t height, uint32_t startposx, uint32_t startposy, float _angle, float _d);
+	PNGTurtle(uint32_t width, uint32_t height, uint32_t startposx, uint32_t startposy, float _angle, float _d);
 	void Save(const char *filename);
 
 	virtual void Render(const char *s);
 
 	void Clear();
-	void Reset();
 
 private:
 	std::unique_ptr<uint8_t> mBuffer;

@@ -6,25 +6,26 @@
 
 class Turtle {
 public:
-    Turtle(uint32_t numpens, uint32_t width, uint32_t height, uint32_t startposx, uint32_t startposy, float _angle,
-           float _d);
+    Turtle(uint32_t width, uint32_t height, uint32_t startposx, uint32_t startposy, float _angle, float _d);
 
     virtual void Render(const char *s) = 0;
     virtual void Clear() = 0;
     virtual void DrawLine(int xpos, int ypos, int newx, int newy, uint8_t rgb[3]) const = 0;
-    virtual void Reset() = 0;
+	
+	
+	virtual void Reset(uint32_t startposx, uint32_t startposy);
 
     float GetD() const;
     void  SetD(float newd);
 
-    void     SetAngle(uint32_t penidx, float degrees);
-    void     SetPenPos(uint32_t penidx, int x, int y);
-    void     MoveForward(uint32_t penidx);
-    void     Turn(uint32_t penidx, float rads);
-    void     PenUp(uint32_t penidx);
-    void     PenDown(uint32_t penidx);
-    void     SetPenColor(uint32_t penidx, uint8_t r, uint8_t g, uint8_t b);
-    uint32_t GetNumPens() const;
+    void SetAngle(float degrees);
+    void SetPenPos(int x, int y);
+    void MoveForward();
+    void Turn(float rads);
+    void PenUp();
+    void PenDown();
+    void SetPenColor(uint8_t r, uint8_t g, uint8_t b);
+    void ResetStack(uint32_t startposx, uint32_t startposy);
 
 protected:
     uint32_t mWidth;
@@ -40,7 +41,7 @@ protected:
         uint8_t rgb[3]{255, 0, 0};
     };
 
-    std::vector<PenState> mPens;
+    std::vector<PenState> mPenStack;
 };
 
 #endif // EXUNIT_LSYSTEMLIB_TURTLE_H
