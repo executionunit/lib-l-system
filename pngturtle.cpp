@@ -78,7 +78,13 @@ void PNGTurtle::Save(const char *filename) {
     stbi_write_png(filename, mWidth, mHeight, numpl, mBuffer.get(), linestride);
 }
 
-void PNGTurtle::DrawLine(int x0, int y0, int x1, int y1, uint8_t rgb[3]) const {
+void PNGTurtle::DrawLine(const vec3 &a, const vec3 &b, uint8_t rgb[3]) const {
+
+	int x0 = (int)a.x;
+	int x1 = (int)b.x;
+	int y0 = (int)a.y;
+	int y1 = (int)b.y;
+
 
     if (x0 >= 0 && x0 < (int)mWidth && y0 >= 0 && y0 < (int)mHeight ||
         x1 >= 0 && x1 < (int)mWidth && y1 >= 0 && y1 < (int)mHeight) {

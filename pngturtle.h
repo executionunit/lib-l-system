@@ -37,7 +37,7 @@ private:
 		}
 	}
 
-	virtual void DrawLine(int x0, int y0, int x1, int y1, uint8_t rgb[3])const override;
+	virtual void DrawLine(const vec3 &a, const vec3 &b, uint8_t rgb[3])const override;
 
 };
 

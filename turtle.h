@@ -4,22 +4,28 @@
 #include <stdint.h>
 #include <vector>
 
+#include "glm/ext/quaternion_float.hpp"
+#include "glm/ext/quaternion_common.hpp"
+#include "glm/ext/vector_float3.hpp"
+
 class Turtle {
 public:
-    Turtle(uint32_t width, uint32_t height, uint32_t startposx, uint32_t startposy, float _angle, float _d);
+	using quat = glm::quat;
+	using vec3 = glm::vec3;
+	
+	Turtle(uint32_t width, uint32_t height, uint32_t startposx, uint32_t startposy, float _angle, float _d);
 
     virtual void Render(const char *s) = 0;
     virtual void Clear() = 0;
-    virtual void DrawLine(int xpos, int ypos, int newx, int newy, uint8_t rgb[3]) const = 0;
-	
-	
-	virtual void Reset(uint32_t startposx, uint32_t startposy);
+    virtual void DrawLine(const vec3 &a, const vec3 &b, uint8_t rgb[3]) const = 0;
+
+    virtual void Reset(uint32_t startposx, uint32_t startposy);
 
     float GetD() const;
     void  SetD(float newd);
 
     void SetAngle(float degrees);
-    void SetPenPos(int x, int y);
+    void SetPenPos(int x, int y, int z = 0);
     void MoveForward();
     void Turn(float rads);
     void PenUp();
@@ -35,18 +41,24 @@ protected:
     float    mEdgeLength;
 
     struct PenState {
-        bool    pendown{true};
-        float   xpos{0.0f};
-        float   ypos{0.0f};
-        float   angle{0};
+        vec3    pos{0, 0, 0};
+        quat    angle;
         uint8_t rgb[3]{255, 0, 0};
+        bool    pendown{true};
+
+        PenState(float x, float y, float angle, bool ipendown)
+            : pos(vec3(x, y, 0)), angle(glm::quat(vec3(0, 0, glm::radians(angle)))), rgb{255, 0, 0}, pendown(ipendown) {
+        }
+
+        void SetZRot(float deg) {
+            angle = glm::quat(vec3(0, 0, glm::radians(deg)));
+        }
     };
 
     std::vector<PenState> mPenStack;
 
-	void PushPen();
-	void PopPen();
-
+    void PushPen();
+    void PopPen();
 };
 
 #endif // EXUNIT_LSYSTEMLIB_TURTLE_H

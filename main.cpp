@@ -192,7 +192,7 @@ int main(int argc, char **argv) {
 	int starty = height >> 1;
 	int iterations = result["iterations"].as<int>();
 
-	//DoBasicDOL(width, height, startx, starty, iterations);
+	DoBasicDOL(width, height, startx, starty, iterations);
 	DoBranching(width, height, startx, starty, iterations);
 }
 

@@ -11,7 +11,7 @@ add_subdirectory(tp)
 add_subdirectory(lsystemlib)
 
 if(LSYSTEM_BUILD_EXE)
-    set(LSYSTEM_EXE_LIBS lsystemlib cxxopts)
+    set(LSYSTEM_EXE_LIBS lsystemlib cxxopts glm::glm)
     set(LSYSTEM_EXE_SRCS
         main.cpp
         turtle.h

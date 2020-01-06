@@ -4,15 +4,13 @@
 #include <math.h>
 #include <cassert>
 
-constexpr float radians(float deg) {
-    return deg * (float)M_PI / 180.0f;
-}
+#include "glm/glm.hpp"
 
 Turtle::Turtle(uint32_t width, uint32_t height, uint32_t startposx, uint32_t startposy, float _angle,
                float _d)
-    : mWidth(width), mHeight(height), mTurnAngle(radians(_angle)), mEdgeLength(_d) {
+    : mWidth(width), mHeight(height), mTurnAngle(glm::radians(_angle)), mEdgeLength(_d) {
 
-	mPenStack.push_back({ true, (float)startposx, (float)startposy, 0, {255, 0, 0} });
+	ResetStack(startposx, startposy);
 }
 
 float Turtle::GetD() const {
@@ -23,33 +21,32 @@ void Turtle::SetD(float newd) {
     mEdgeLength = newd;
 }
 
-void Turtle::SetPenPos(int x, int y) {
-    mPenStack.back().xpos = x;
-    mPenStack.back().ypos = y;
+void Turtle::SetPenPos(int x, int y, int z) {
+    mPenStack.back().pos.x = x;
+	mPenStack.back().pos.y = y;
+	mPenStack.back().pos.z = z;
 }
 
 void Turtle::SetAngle(float degrees) {
-    mPenStack.back().angle = radians(degrees);
+	mPenStack.back().SetZRot(degrees);
 }
 
 void Turtle::MoveForward() {
 
     auto &pen = mPenStack.back();
 
-    float newx = pen.xpos + mEdgeLength * cosf(pen.angle);
-    float newy = pen.ypos + mEdgeLength * sinf(pen.angle);
+    vec3 newpos = pen.pos + pen.angle * vec3(mEdgeLength, 0, 0);
 
     if (pen.pendown) {
-        DrawLine((int)pen.xpos, (int)pen.ypos, (int)newx, (int)newy, pen.rgb);
+        DrawLine(pen.pos, newpos, pen.rgb);
     }
 
-    pen.xpos = newx;
-    pen.ypos = newy;
+	pen.pos = newpos;
 }
 
 void Turtle::Turn(float rads) {
 
-    mPenStack.back().angle += rads;
+	mPenStack.back().angle *= quat(vec3(0, 0, rads));
 }
 
 void Turtle::PenUp() {
@@ -68,7 +65,7 @@ void Turtle::SetPenColor(uint8_t r, uint8_t g, uint8_t b) {
 
 void Turtle::ResetStack(uint32_t startposx, uint32_t startposy) {
 	mPenStack.clear();
-	mPenStack.push_back({ true, (float)startposx, (float)startposy, 0, {255, 0, 0} });
+	mPenStack.push_back(PenState((float)startposx, (float)startposy, 0, true));
 }
 
 void Turtle::Reset(uint32_t startposx, uint32_t startposy) {
