@@ -12,3 +12,6 @@ if(LSYSTEM_BUILD_EXE)
     set(CXXOPTS_BUILD_ENABLE_INSTALL OFF CACHE INTERNAL "")
     add_subdirectory(cxxopts)
 endif()
+
+add_subdirectory(glm)
+
