@@ -4,7 +4,12 @@
 namespace exunit {
 namespace lsystem {
 
-DOLSystem::DOLSystem(const char *axiom, const svector &rules) : mState(axiom) {
+DOLSystem::DOLSystem(const char *axiom, const svector &rules, const char *contextignore) : mState(axiom) {
+
+	if (contextignore) {
+        mContextIgnore = contextignore;
+    }
+
     BuildRules(rules);
 }
 

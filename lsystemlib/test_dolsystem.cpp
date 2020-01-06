@@ -85,3 +85,11 @@ TEST_CASE("DOL System Multi Iterate") {
 	CHECK(s.GetGeneration() == 5);
 	CHECK(strcmp(s.GetState(), "abaababa") == 0);
 }
+
+TEST_CASE("Context Sensitive LSystems") {
+
+	const char *axiom = "b";
+	DOLSystem::svector rules = { "a=>ab", "b=>a" };
+	const char *ignore = "+-";
+	DOLSystem   s(axiom, rules, ignore);
+}

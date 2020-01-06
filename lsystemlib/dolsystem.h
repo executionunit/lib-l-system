@@ -27,7 +27,12 @@ public:
     /* a vector of strings */
     using svector = XLSYS_VECTOR<XLSYS_STRING>;
 
-    DOLSystem(const char *axiom, const svector &rules);
+	/**
+	** @param axiom the starting condition of the system eg: "F"
+	** @param rules a vector of rules of the form X=>X' eg: {"F=>FS", "S=>F"}
+	** @param contextignore string of tokens(characters) to be ignored when scoping context. eg: "+-"
+	*/
+	DOLSystem(const char *axiom, const svector &rules, const char *contextignore = nullptr);
     ~DOLSystem();
 
     void Iterate(uint32_t n = 1);
@@ -53,6 +58,7 @@ public:
 private:
     rvector  mRules;
     string   mState;
+	string   mContextIgnore; /*< tokens to ignore when context matching.*/
     uint32_t mGeneration{0};
 };
 
