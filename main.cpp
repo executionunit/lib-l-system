@@ -1,6 +1,7 @@
 
 #include "dolsystem.h"
 #include "pngturtle.h"
+#include "objturtle.h"
 
 #include "cxxopts.hpp"
 
@@ -136,7 +137,7 @@ void DoBasicDOL(int width, int height, int startx, int starty, int iterations) {
 
 void DoBranching(int width, int height, int startx, int starty, int iterations) {
 
-	struct Plant{
+	struct System{
 		const char *axiom;
 		std::vector<std::string> rules;
 		int itererations;
@@ -170,6 +171,39 @@ void DoBranching(int width, int height, int startx, int starty, int iterations) 
 	}
 }
 
+void Do3D(int width, int height, int startx, int starty, int iterations) {
+	struct System {
+		const char *axiom;
+		std::vector<std::string> rules;
+		int itererations;
+		float branchangle;
+		float branchlength;
+		const char *filename;
+
+	} systems[] = {
+		{"F+F+F+F", {R"(X=>^\XF^\XFX-F^//XFX&F+//XFX-F/X-/)"}, 0, 90, 10.0f, "3dtest1.obj"},
+		{"^F+F+F+F", {R"(X=>^\XF^\XFX-F^//XFX&F+//XFX-F/X-/)"}, 0, 90, 10.0f, "3dtest2.obj"},
+		{"F/F/F/F", {R"(X=>^\XF^\XFX-F^//XFX&F+//XFX-F/X-/)"}, 0, 90, 10.0f, "3dtest3.obj"},
+		{"X", {R"(X=>^\XF^\XFX-F^//XFX&F+//XFX-F/X-/)"}, 4, 90, 10.0f, "hilbert3d.obj"},
+	};
+
+	for (const auto plant : systems) {
+
+		float angle = 25.7f;
+		OBJTurtle turtle(width, height, startx, starty, plant.branchangle, plant.branchlength);
+		turtle.SetPenColor(255, 0, 0);
+
+		// plant (1.24a)
+		exunit::lsystem::DOLSystem system(plant.axiom, plant.rules);
+
+		system.Iterate(plant.itererations);
+		turtle.SetAngle(-90);
+		turtle.SetPenPos(width >> 1, height - 100);
+		turtle.Render(system.GetState());
+		turtle.Save(plant.filename);
+	}
+}
+
 int main(int argc, char **argv) {
 
 	cxxopts::Options options("lsystemexe", "harness for LSystemLib");
@@ -192,7 +226,8 @@ int main(int argc, char **argv) {
 	int starty = height >> 1;
 	int iterations = result["iterations"].as<int>();
 
-	DoBasicDOL(width, height, startx, starty, iterations);
-	DoBranching(width, height, startx, starty, iterations);
+	//DoBasicDOL(width, height, startx, starty, iterations);
+	//DoBranching(width, height, startx, starty, iterations);
+	Do3D(width, height, startx, starty, iterations);
 }
 

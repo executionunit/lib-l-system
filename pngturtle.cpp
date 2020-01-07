@@ -15,43 +15,6 @@ PNGTurtle::PNGTurtle(uint32_t width, uint32_t height, uint32_t startposx, uint32
     Clear();
 }
 
-void PNGTurtle::Render(const char *s) {
-    if (s == nullptr) {
-        return;
-    }
-
-
-    while (*s != '\0') {
-        char c = *s;
-
-        switch (c) {
-		case 'I':
-			/* deliberate fallthrough */
-		case 'F':
-            MoveForward();
-            break;
-        case 'f':
-            PenUp();
-            MoveForward();
-            PenDown();
-            break;
-        case '+':
-            Turn(-mTurnAngle);
-            break;
-        case '-':
-            Turn(mTurnAngle);
-            break;
-		case '[':
-			PushPen();
-			break;
-		case ']':
-			PopPen();
-			break;
-        }
-
-        ++s;
-    }
-}
 
 void PNGTurtle::Clear() {
 
@@ -78,7 +41,7 @@ void PNGTurtle::Save(const char *filename) {
     stbi_write_png(filename, mWidth, mHeight, numpl, mBuffer.get(), linestride);
 }
 
-void PNGTurtle::DrawLine(const vec3 &a, const vec3 &b, uint8_t rgb[3]) const {
+void PNGTurtle::DrawLine(const vec3 &a, const vec3 &b, uint8_t rgb[3]) {
 
 	int x0 = (int)a.x;
 	int x1 = (int)b.x;

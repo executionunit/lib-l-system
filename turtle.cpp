@@ -44,7 +44,15 @@ void Turtle::MoveForward() {
 	pen.pos = newpos;
 }
 
-void Turtle::Turn(float rads) {
+void Turtle::TurnX(float rads) {
+	mPenStack.back().angle *= quat(vec3(rads, 0, 0));
+}
+
+void Turtle::TurnY(float rads) {
+	mPenStack.back().angle *= quat(vec3(0, rads, 0));
+}
+
+void Turtle::TurnZ(float rads) {
 
 	mPenStack.back().angle *= quat(vec3(0, 0, rads));
 }
@@ -86,4 +94,53 @@ void Turtle::PopPen() {
 		return;
 	}
 	assert(("pen stack underflow", false));
+}
+
+void Turtle::Render(const char *s) {
+	if (s == nullptr) {
+		return;
+	}
+
+
+	while (*s != '\0') {
+		char c = *s;
+
+		switch (c) {
+		case 'I':/* deliberate fallthrough */
+		case 'F':
+			MoveForward();
+			break;
+		case 'f':
+			PenUp();
+			MoveForward();
+			PenDown();
+			break;
+		case '+':
+			TurnZ(-mTurnAngle);
+			break;
+		case '-':
+			TurnZ(mTurnAngle);
+			break;
+		case '&':
+			TurnX(mTurnAngle);
+			break;
+		case '^':
+			TurnX(-mTurnAngle);
+			break;
+		case '\\':
+			TurnY(mTurnAngle);
+			break;
+		case '/':
+			TurnY(-mTurnAngle);
+			break;
+		case '[':
+			PushPen();
+			break;
+		case ']':
+			PopPen();
+			break;
+		}
+
+		++s;
+	}
 }

@@ -15,9 +15,9 @@ public:
 	
 	Turtle(uint32_t width, uint32_t height, uint32_t startposx, uint32_t startposy, float _angle, float _d);
 
-    virtual void Render(const char *s) = 0;
+    virtual void Render(const char *s);
     virtual void Clear() = 0;
-    virtual void DrawLine(const vec3 &a, const vec3 &b, uint8_t rgb[3]) const = 0;
+    virtual void DrawLine(const vec3 &a, const vec3 &b, uint8_t rgb[3]) = 0;
 
     virtual void Reset(uint32_t startposx, uint32_t startposy);
 
@@ -27,7 +27,12 @@ public:
     void SetAngle(float degrees);
     void SetPenPos(int x, int y, int z = 0);
     void MoveForward();
-    void Turn(float rads);
+
+	/* imagine the turtle is stnading in the XY plane which is parallel to the screen */
+	void TurnX(float rads); /* pitching in/out around the X axis*/
+	void TurnY(float rads); /* roll around the Y axis */
+    void TurnZ(float rads); /* turn left right around the Z axis (in/out of the screen)*/
+
     void PenUp();
     void PenDown();
     void SetPenColor(uint8_t r, uint8_t g, uint8_t b);

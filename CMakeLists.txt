@@ -17,10 +17,24 @@ if(LSYSTEM_BUILD_EXE)
         turtle.h
 		turtle.cpp
         pngturtle.h
-        pngturtle.cpp)
+        pngturtle.cpp
+		objturtle.h
+		objturtle.cpp
+        utility.cpp
+        utility.h)
+
+    set(LSYSTEM_EXE_TEST_SRCS
+        test_lsystem_exe.cpp
+        utility.cpp
+        utility.h
+    )
 
     add_executable(lsystemexe ${LSYSTEM_EXE_SRCS})
     target_link_libraries(lsystemexe ${LSYSTEM_EXE_LIBS})
     target_include_directories(lsystemexe PRIVATE "tp/stb")
+
+    add_executable(lsystemexe_tests ${LSYSTEM_EXE_TEST_SRCS})
+    target_link_libraries(lsystemexe_tests doctest::doctest lsystemlib glm::glm)
+
 endif()
 
