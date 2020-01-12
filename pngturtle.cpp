@@ -8,7 +8,7 @@
 
 PNGTurtle::PNGTurtle(uint32_t width, uint32_t height, uint32_t startposx, uint32_t startposy,
                      float _angle, float _d)
-    : Turtle(width, height, startposx, startposy, _angle, _d) {
+    : Turtle(startposx, startposy, _angle, _d), mWidth(width), mHeight(height) {
 
     mBuffer.reset(new uint8_t[width * height * numplanes()]);
 

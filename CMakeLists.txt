@@ -18,10 +18,13 @@ if(LSYSTEM_BUILD_EXE)
 		turtle.cpp
         pngturtle.h
         pngturtle.cpp
-		objturtle.h
-		objturtle.cpp
+		modelturtle.h
+		modelturtle.cpp
+		boundsturtle.h
+		boundsturtle.cpp
         utility.cpp
-        utility.h)
+        utility.h
+		)
 
     set(LSYSTEM_EXE_TEST_SRCS
         test_lsystem_exe.cpp

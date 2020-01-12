@@ -10,16 +10,16 @@
 
 class Turtle {
 public:
-	using quat = glm::quat;
-	using vec3 = glm::vec3;
-	
-	Turtle(uint32_t width, uint32_t height, uint32_t startposx, uint32_t startposy, float _angle, float _d);
+    using vec3 = glm::vec3;
+    using mat3 = glm::mat3x3;
+
+    Turtle(uint32_t startposx, uint32_t startposy, float _angle, float _d);
 
     virtual void Render(const char *s);
     virtual void Clear() = 0;
     virtual void DrawLine(const vec3 &a, const vec3 &b, uint8_t rgb[3]) = 0;
 
-    virtual void Reset(uint32_t startposx, uint32_t startposy);
+    virtual void Reset(uint32_t startposx, uint32_t startposy, float angleradians = 0);
 
     float GetD() const;
     void  SetD(float newd);
@@ -28,35 +28,42 @@ public:
     void SetPenPos(int x, int y, int z = 0);
     void MoveForward();
 
-	/* imagine the turtle is stnading in the XY plane which is parallel to the screen */
-	void TurnX(float rads); /* pitching in/out around the X axis*/
-	void TurnY(float rads); /* roll around the Y axis */
-    void TurnZ(float rads); /* turn left right around the Z axis (in/out of the screen)*/
+    void Roll(float rads);
+    void Turn(float rads);
+    void Pitch(float rads);
 
     void PenUp();
     void PenDown();
     void SetPenColor(uint8_t r, uint8_t g, uint8_t b);
-    void ResetStack(uint32_t startposx, uint32_t startposy);
+    void ResetStack(uint32_t startposx, uint32_t startposy, float angleradians);
+    void SetScale(const vec3 &s) {
+        mScale = s;
+    }
+    void SetPenOffset(const vec3 &penoffset) {
+        mOffset = penoffset;
+    }
 
 protected:
+    float mTurnAngle;
+    float mEdgeLength;
 
-    uint32_t mWidth;
-    uint32_t mHeight;
-    float    mTurnAngle;
-    float    mEdgeLength;
+    vec3 mScale{1.0f, 1.0f, 1.0f};
+    vec3 mOffset{0.0f};
 
     struct PenState {
         vec3    pos{0, 0, 0};
-        quat    angle;
+        mat3    angle;
         uint8_t rgb[3]{255, 0, 0};
         bool    pendown{true};
 
-        PenState(float x, float y, float angle, bool ipendown)
-            : pos(vec3(x, y, 0)), angle(glm::quat(vec3(0, 0, glm::radians(angle)))), rgb{255, 0, 0}, pendown(ipendown) {
+        PenState(float x, float y, bool ipendown) : pos(vec3(x, y, 0)), rgb{255, 0, 0}, pendown(ipendown) {
+            angle = glm::identity<mat3>();
         }
 
         void SetZRot(float deg) {
-            angle = glm::quat(vec3(0, 0, glm::radians(deg)));
+            float c = glm::cos(glm::radians(deg));
+            float s = glm::sin(glm::radians(deg));
+            angle = mat3(c, -s, 0, s, c, 0, 0, 0, 1);
         }
     };
 

@@ -1,9 +1,13 @@
 
 #include "dolsystem.h"
 #include "pngturtle.h"
-#include "objturtle.h"
+#include "modelturtle.h"
+#include "boundsturtle.h"
 
 #include "cxxopts.hpp"
+
+#include "glm/glm.hpp"
+#include "glm/gtx/string_cast.hpp"
 
 #include <memory>
 #include <stdarg.h>
@@ -19,215 +23,196 @@ std::string StrFormat(const char *fmt, ...) {
 }
 
 void DoBasicDOL(int width, int height, int startx, int starty, int iterations) {
-	{
-		PNGTurtle turtle(width, height, startx, starty, 90.0f, 50);
+
+    struct System {
+        const char *             axiom;
+        std::vector<std::string> rules;
+        int                      itererations;
+        float                    branchangle;
+        const char *             filename;
+
+	} basics[] = {
+		{
+			 "-I", 
+			{"F=>FF-I-I+F+F-I-IF+I+FFI-F+I+FF+I-FI-I-F+F+II-", "I=>+FF-I-I+F+FI+F-II-F-I+FII-F-IF+F+I-I-F+F+II"},
+			2,
+			90.0f,
+			"quadratic-gosper.png"
+		},
+		{
+			"F", {"F=>F+I++I-F--FF-I+", "I=>-F+II++I+F--F-I"},
+			4,
+			60.0f,
+			"hexagon-gosper.png"
+		},
+		{
+			"I", {"F=>I+F+I", "I=>F-I-F"},
+			6,
+			60.0f,
+			"sierpinksi-gasket.png"
+		},
+		{
+			"F", {"F=>F+I+", "I=>-F-I"},
+			10,
+			90.0f,
+			"dragoncurve.png"
+		},
+		{
+			"F+F+F+F", {"F=>F+f-FF+F+FF+Ff+FF-f+FF-F-FF-Ff-FFF", "f=>ffffff"},
+			3,
+			90.0f,
+			"koch_islands.png"
+		},
+		{
+			"-F", 
+			{"F=>F+F-F-F+F"},
+			5,
+			90.0f, 
+			"quad_snowflake.png"
+		},
+		{
+			"F-F-F-F",
+			{"F=>F+FF-FF-F-F+F+FF-F-F+F+FF+FF-F"},
+			3,
+			90.0f,
+			"quad_koch_island.png"
+		}
+	};
+
+	for (const auto &b : basics) {
+		exunit::lsystem::DOLSystem system(b.axiom, b.rules);
+		system.Iterate(b.itererations);
+
+		const float branchlength = 10.0f;
+		const int startx = 0;
+		const int starty = 0;
+
+		BoundsTurtle bounds(startx, starty, b.branchangle, branchlength);
+		bounds.Render(system.GetState());
+
+		float syswidth = (bounds.mMax.x - bounds.mMin.x);
+		float sysheight = (bounds.mMax.y - bounds.mMin.y);
+		
+		float scale = std::min(width / syswidth, height / sysheight);
+		glm::vec3 center = ((bounds.mMin + (bounds.mMax - bounds.mMin) * 0.5f)) * 0.5f;
+
+		PNGTurtle turtle(width, height, startx, starty, b.branchangle, branchlength);
+		turtle.SetPenOffset(-bounds.mMin);
+		turtle.SetScale(glm::vec3(scale));
 		turtle.SetPenColor(255, 0, 0);
-
-		// quadratic koch island (1.3a)
-		exunit::lsystem::DOLSystem system("F-F-F-F", { "F=>F+FF-FF-F-F+F+FF-F-F+F+FF+FF-F" });
-		iterations = 3;
-		system.Iterate(iterations);
-		turtle.Reset(startx, starty);
-		turtle.SetD(2.2f);
-		turtle.SetPenPos(200, 300);
 		turtle.Render(system.GetState());
-		turtle.Save("quad_koch_island.png");
+		turtle.Save(b.filename);
 	}
-
-	{
-		PNGTurtle turtle(width, height, startx, starty, 90.0f, 50);
-		turtle.SetPenColor(255, 0, 0);
-
-		// quadratic snowflack curve (1.3b)
-		exunit::lsystem::DOLSystem system("-F", { "F=>F+F-F-F+F" });
-		iterations = 5;
-		system.Iterate(iterations);
-		turtle.Reset(startx, starty);
-		turtle.SetD(3);
-		turtle.SetPenPos(100, 100);
-		turtle.Render(system.GetState());
-		turtle.Save("quad_snowflake.png");
-	}
-
-	{
-		PNGTurtle turtle(width, height, startx, starty, 90.0f, 50);
-		turtle.SetPenColor(255, 0, 0);
-
-		// Islands and lakes (1.8)
-		exunit::lsystem::DOLSystem system("F+F+F+F", { "F=>F+f-FF+F+FF+Ff+FF-f+FF-F-FF-Ff-FFF", "f=>ffffff" });
-		iterations = 3;
-		system.Iterate(iterations);
-		turtle.Reset(startx, starty);
-		turtle.SetD(4);
-		turtle.SetPenPos(100, height - 100);
-		turtle.Render(system.GetState());
-		turtle.Save("koch_islands.png");
-	}
-
-	{
-		PNGTurtle turtle(width, height, startx, starty, 90.0f, 50);
-		turtle.SetPenColor(255, 0, 0);
-
-		// dragon curve (1.10a)
-		// F == Fl
-		// I == Fr
-		exunit::lsystem::DOLSystem system("F", { "F=>F+I+", "I=>-F-I" });
-		iterations = 10;
-		system.Iterate(iterations);
-		turtle.Reset(startx, starty);
-		turtle.SetD(15);
-		turtle.SetPenPos(600, height - 400);
-		turtle.SetAngle(-90.0f);
-		turtle.Render(system.GetState());
-		turtle.Save("dragoncurve.png");
-	}
-
-	{
-		PNGTurtle turtle(width, height, startx, starty, 60.0f, 50);
-		turtle.SetPenColor(255, 0, 0);
-
-		// dragon curve (1.10b)
-		// F == Fl
-		// I == Fr
-		exunit::lsystem::DOLSystem system("I", { "F=>I+F+I", "I=>F-I-F" });
-		iterations = 6;
-		system.Iterate(iterations);
-		turtle.Reset(startx, starty);
-		turtle.SetD(15);
-		turtle.SetPenPos(10, height - 100);
-		turtle.Render(system.GetState());
-		turtle.Save("sierpinksi-gasket.png");
-	}
-
-	{
-		PNGTurtle turtle(width, height, startx, starty, 60.0f, 50);
-		turtle.SetPenColor(255, 0, 0);
-
-		// hexagon-gosper curve (1.11a)
-		// F == Fl
-		// I == Fr
-		exunit::lsystem::DOLSystem system("F", { "F=>F+I++I-F--FF-I+", "I=>-F+II++I+F--F-I" });
-		iterations = 4;
-		system.Iterate(iterations);
-		turtle.Reset(startx, starty);
-		turtle.SetD(15);
-		turtle.SetPenPos(650, height - 100);
-		turtle.Render(system.GetState());
-		turtle.Save("hexagon-gosper.png");
-	}
-
-	{
-		PNGTurtle turtle(width, height, startx, starty, 90.0f, 50);
-		turtle.SetPenColor(255, 0, 0);
-
-		// quadratic-gosper curve (1.11b)
-		// F == Fl
-		// I == Fr
-		exunit::lsystem::DOLSystem system("-I", { "F=>FF-I-I+F+F-I-IF+I+FFI-F+I+FF+I-FI-I-F+F+II-", "I=>+FF-I-I+F+FI+F-II-F-I+FII-F-IF+F+I-I-F+F+II" });
-		iterations = 2;
-		system.Iterate(iterations);
-		turtle.Reset(startx, starty);
-		turtle.SetD(20);
-		turtle.SetPenPos(100, 100);
-		turtle.Render(system.GetState());
-		turtle.Save("quadratic-gosper.png");
-	}
-
 }
 
 void DoBranching(int width, int height, int startx, int starty, int iterations) {
 
-	struct System{
-		const char *axiom;
-		std::vector<std::string> rules;
-		int itererations;
-		float branchangle;
-		float branchlength;
-		const char *filename;
+    struct System {
+        const char *             axiom;
+        std::vector<std::string> rules;
+        int                      itererations;
+        float                    branchangle;
+        float                    branchlength;
+        const char *             filename;
 
-	} Plants[] = {
-		{"F", {"F=>F[+F]F[-F]F"}, 5, 25.7f, 3.0f, "plant1.png"},
-		{"F", {"F=>F[+F]F[-F]F"}, 5, 20.0f, 3.0f, "plant2.png"},
-		{"F", {"F=>FF-[-F+F+F]+[+F-F-F]"}, 4, 22.5f, 12.0f, "plant3.png"},
-		{"X", {"X=>F[+X]F[-X]+X", "F=>FF"}, 7, 20.0f, 3.5f, "plant4.png"},
-		{"X", {"X=>F[+X][-X]FX", "F=>FF"}, 7, 25.7f, 3.5f, "plant5.png"},
-		{"X", {"X=>F-[[X]+X]+F[+FX]-X", "F=>FF"}, 7, 22.5f, 2.8f, "plant6.png"},
-	};
+    } Plants[] = {
+        {"F", {"F=>F[+F]F[-F]F"}, 5, 25.7f, 3.0f, "plant1.png"},
+        {"F", {"F=>F[+F]F[-F]F"}, 5, 20.0f, 3.0f, "plant2.png"},
+        {"F", {"F=>FF-[-F+F+F]+[+F-F-F]"}, 4, 22.5f, 12.0f, "plant3.png"},
+        {"X", {"X=>F[+X]F[-X]+X", "F=>FF"}, 7, 20.0f, 3.5f, "plant4.png"},
+        {"X", {"X=>F[+X][-X]FX", "F=>FF"}, 7, 25.7f, 3.5f, "plant5.png"},
+        {"X", {"X=>F-[[X]+X]+F[+FX]-X", "F=>FF"}, 7, 22.5f, 2.8f, "plant6.png"},
+    };
 
-	for(const auto plant: Plants){
-	
-		float angle = 25.7f;
-		PNGTurtle turtle(width, height, startx, starty, plant.branchangle, plant.branchlength);
-		turtle.SetPenColor(255, 0, 0);
+    for (const auto plant : Plants) {
 
-		// plant (1.24a)
-		exunit::lsystem::DOLSystem system(plant.axiom, plant.rules);
+        PNGTurtle turtle(width, height, startx, starty, plant.branchangle, plant.branchlength);
+        turtle.SetPenColor(255, 0, 0);
 
-		system.Iterate(plant.itererations);
-		turtle.SetAngle(-90);
-		turtle.SetPenPos(width >> 1, height-100);
-		turtle.Render(system.GetState());
-		turtle.Save(plant.filename);
-	}
+        // plant (1.24a)
+        exunit::lsystem::DOLSystem system(plant.axiom, plant.rules);
+
+        system.Iterate(plant.itererations);
+        // turtle.Turn(glm::radians(0.0f));
+        turtle.SetPenPos(width >> 1, 0, 100);
+        turtle.Render(system.GetState());
+        turtle.Save(plant.filename);
+    }
 }
 
-void Do3D(int width, int height, int startx, int starty, int iterations) {
-	struct System {
-		const char *axiom;
-		std::vector<std::string> rules;
-		int itererations;
-		float branchangle;
-		float branchlength;
-		const char *filename;
+void Do3D(int startx, int starty, int iterations) {
+    struct System {
+        const char *             axiom;
+        std::vector<std::string> rules;
+        int                      itererations;
+        float                    branchangle;
+        float                    branchlength;
+        const char *             filename;
 
-	} systems[] = {
-		{"F+F+F+F", {R"(X=>^\XF^\XFX-F^//XFX&F+//XFX-F/X-/)"}, 0, 90, 10.0f, "3dtest1.obj"},
-		{"^F+F+F+F", {R"(X=>^\XF^\XFX-F^//XFX&F+//XFX-F/X-/)"}, 0, 90, 10.0f, "3dtest2.obj"},
-		{"F/F/F/F", {R"(X=>^\XF^\XFX-F^//XFX&F+//XFX-F/X-/)"}, 0, 90, 10.0f, "3dtest3.obj"},
-		{"X", {R"(X=>^\XF^\XFX-F^//XFX&F+//XFX-F/X-/)"}, 4, 90, 10.0f, "hilbert3d.obj"},
-	};
+    } systems[] = {
+        //{"F+F+F+F", {R"(X=>^\XF^\XFX-F^//XFX&F+//XFX-F/X-/)"}, 0, 90, 10.0f, "3dtest1.ply"},
+        //{"^F+F+F+F", {R"(X=>^\XF^\XFX-F^//XFX&F+//XFX-F/X-/)"}, 0, 90, 10.0f, "3dtest2.ply"},
+        //{"F/F/F/F", {R"(X=>^\XF^\XFX-F^//XFX&F+//XFX-F/X-/)"}, 0, 90, 10.0f, "3dtest3.ply"},
+        {"A",
+         {R"(A=>B-F+CFC+F-D&F^D-F+&&CFC+F+B//)", R"(B=>A&F^CFB^F^D^^-F-D^|F^B|FC^F^A//)",
+          R"(C=>|D^|F^B-F+C^F^A&&FA&F^C+F+B^F^D//)", R"(D=>|CFB-F+B|FA&F^A&&FB-F+B|FC//)"},
+         3,
+         90,
+         10.0f,
+         "hilbert3d.ply"},
+    };
 
-	for (const auto plant : systems) {
+    for (const auto plant : systems) {
 
-		float angle = 25.7f;
-		OBJTurtle turtle(width, height, startx, starty, plant.branchangle, plant.branchlength);
-		turtle.SetPenColor(255, 0, 0);
+        ModelTurtle turtle(startx, starty, plant.branchangle, plant.branchlength);
+        turtle.SetPenColor(244, 173, 11);
 
-		// plant (1.24a)
-		exunit::lsystem::DOLSystem system(plant.axiom, plant.rules);
+        exunit::lsystem::DOLSystem system(plant.axiom, plant.rules);
 
-		system.Iterate(plant.itererations);
-		turtle.SetAngle(-90);
-		turtle.SetPenPos(width >> 1, height - 100);
-		turtle.Render(system.GetState());
-		turtle.Save(plant.filename);
-	}
+        system.Iterate(plant.itererations);
+        turtle.SetAngle(-90);
+        turtle.Render(system.GetState());
+        turtle.Save(plant.filename);
+    }
+}
+
+void DoOBJTurtle() {
+
+    ModelTurtle turtle(0, 0, 90, 10);
+    turtle.SetPenColor(255, 0, 0);
+    // turtle.Render(R"(^\F^\F-F^//F&F+F//-F)");
+
+    turtle.MoveForward();
+    turtle.Turn(glm::radians(90.0f));
+    turtle.MoveForward();
+
+    turtle.Save("testturtle.ply");
 }
 
 int main(int argc, char **argv) {
 
-	cxxopts::Options options("lsystemexe", "harness for LSystemLib");
-	options.add_options()("t,turtle", "turtle type", cxxopts::value<std::string>()->default_value("png"))(
-		"f,file", "File name", cxxopts::value<std::string>()->default_value("out.png"))(
-			"w,width", "Image Width", cxxopts::value<int>()->default_value("1024"))(
-				"h,height", "Image Height", cxxopts::value<int>()->default_value("1024"))(
-					"i,iterations", "System Iterations", cxxopts::value<int>()->default_value("4"));
+    cxxopts::Options options("lsystemexe", "harness for LSystemLib");
+    options.add_options()("t,turtle", "turtle type", cxxopts::value<std::string>()->default_value("png"))(
+        "f,file", "File name", cxxopts::value<std::string>()->default_value("out.png"))(
+        "w,width", "Image Width", cxxopts::value<int>()->default_value("1024"))(
+        "h,height", "Image Height", cxxopts::value<int>()->default_value("1024"))(
+        "i,iterations", "System Iterations", cxxopts::value<int>()->default_value("4"));
 
-	auto        result = options.parse(argc, argv);
-	std::string fname = result["file"].as<std::string>();
-	size_t      pos = fname.find_last_of(".");
-	if (pos != std::string::npos) {
-		fname = fname.substr(0, pos);
-	}
+    auto        result = options.parse(argc, argv);
+    std::string fname = result["file"].as<std::string>();
+    size_t      pos = fname.find_last_of(".");
+    if (pos != std::string::npos) {
+        fname = fname.substr(0, pos);
+    }
 
-	int width = result["width"].as<int>();
-	int height = result["height"].as<int>();
-	int startx = width >> 1;
-	int starty = height >> 1;
-	int iterations = result["iterations"].as<int>();
+    int width = result["width"].as<int>();
+    int height = result["height"].as<int>();
+    int startx = width >> 1;
+    int starty = height >> 1;
+    int iterations = result["iterations"].as<int>();
 
-	//DoBasicDOL(width, height, startx, starty, iterations);
-	//DoBranching(width, height, startx, starty, iterations);
-	Do3D(width, height, startx, starty, iterations);
+    DoBasicDOL(width, height, startx, starty, iterations);
+    DoBranching(width, height, startx, starty, iterations);
+    Do3D(startx, starty, iterations);
+    DoOBJTurtle();
 }
-

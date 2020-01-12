@@ -6,11 +6,11 @@
 
 #include "glm/glm.hpp"
 
-Turtle::Turtle(uint32_t width, uint32_t height, uint32_t startposx, uint32_t startposy, float _angle,
+Turtle::Turtle(uint32_t startposx, uint32_t startposy, float _angle,
                float _d)
-    : mWidth(width), mHeight(height), mTurnAngle(glm::radians(_angle)), mEdgeLength(_d) {
+    : mTurnAngle(glm::radians(_angle)), mEdgeLength(_d) {
 
-	ResetStack(startposx, startposy);
+	ResetStack(startposx, startposy, 0);
 }
 
 float Turtle::GetD() const {
@@ -35,26 +35,39 @@ void Turtle::MoveForward() {
 
     auto &pen = mPenStack.back();
 
-    vec3 newpos = pen.pos + pen.angle * vec3(mEdgeLength, 0, 0);
+    vec3 newpos = pen.pos + pen.angle * vec3(0, mEdgeLength, 0);
 
     if (pen.pendown) {
-        DrawLine(pen.pos, newpos, pen.rgb);
+        DrawLine( (pen.pos + mOffset) * mScale, (newpos + mOffset)* mScale, pen.rgb);
     }
 
 	pen.pos = newpos;
 }
 
-void Turtle::TurnX(float rads) {
-	mPenStack.back().angle *= quat(vec3(rads, 0, 0));
+void Turtle::Roll(float rads) {
+	float c = glm::cos(rads);
+	float s = glm::sin(rads);
+
+	//RH
+	mPenStack.back().angle = mPenStack.back().angle * mat3(1, 0, 0 ,0, c, s, 0, -s, c);
 }
 
-void Turtle::TurnY(float rads) {
-	mPenStack.back().angle *= quat(vec3(0, rads, 0));
+void Turtle::Turn(float rads) {
+
+	float c = glm::cos(rads);
+	float s = glm::sin(rads);
+
+	//RU
+	mPenStack.back().angle = mPenStack.back().angle * mat3(c, -s, 0, s, c, 0, 0, 0, 1);
 }
 
-void Turtle::TurnZ(float rads) {
+void Turtle::Pitch(float rads) {
 
-	mPenStack.back().angle *= quat(vec3(0, 0, rads));
+	float c = glm::cos(rads);
+	float s = glm::sin(rads);
+
+	//RL
+	mPenStack.back().angle = mPenStack.back().angle * mat3(c, 0, s, 0, 1, 0, -s, 0, c);
 }
 
 void Turtle::PenUp() {
@@ -71,15 +84,16 @@ void Turtle::SetPenColor(uint8_t r, uint8_t g, uint8_t b) {
     mPenStack.back().rgb[2] = b;
 }
 
-void Turtle::ResetStack(uint32_t startposx, uint32_t startposy) {
+void Turtle::ResetStack(uint32_t startposx, uint32_t startposy, float angleradians) {
 	mPenStack.clear();
-	mPenStack.push_back(PenState((float)startposx, (float)startposy, 0, true));
+	mPenStack.push_back(PenState((float)startposx, (float)startposy, true));
+	//Turn(angleradians);
 }
 
-void Turtle::Reset(uint32_t startposx, uint32_t startposy) {
+void Turtle::Reset(uint32_t startposx, uint32_t startposy, float angleradians) {
 
 	Clear();
-	ResetStack(startposx, startposy);
+	ResetStack(startposx, startposy, angleradians);
 
 }
 
@@ -101,7 +115,6 @@ void Turtle::Render(const char *s) {
 		return;
 	}
 
-
 	while (*s != '\0') {
 		char c = *s;
 
@@ -116,22 +129,25 @@ void Turtle::Render(const char *s) {
 			PenDown();
 			break;
 		case '+':
-			TurnZ(-mTurnAngle);
+			Turn(mTurnAngle);
 			break;
 		case '-':
-			TurnZ(mTurnAngle);
+			Turn(-mTurnAngle);
 			break;
 		case '&':
-			TurnX(mTurnAngle);
+			Roll(mTurnAngle);
 			break;
 		case '^':
-			TurnX(-mTurnAngle);
+			Roll(-mTurnAngle);
 			break;
 		case '\\':
-			TurnY(mTurnAngle);
+			Pitch(mTurnAngle);
 			break;
 		case '/':
-			TurnY(-mTurnAngle);
+			Pitch(-mTurnAngle);
+			break;
+		case '|':
+			Turn(glm::radians(180.0f));
 			break;
 		case '[':
 			PushPen();
