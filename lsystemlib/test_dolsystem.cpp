@@ -1,13 +1,13 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest/doctest.h"
 
-#include "dolsystem.h"
+#include "lsystem.h"
 
 using namespace exunit::lsystem;
 
 TEST_CASE("DOL System Empty Construction") {
 
-    DOLSystem s("", DOLSystem::svector());
+    LSystem s("", LSystem::svector());
 
     CHECK(strcmp(s.GetState(), "") == 0);
 	CHECK(s.GetGeneration() == 0);
@@ -17,7 +17,7 @@ TEST_CASE("DOL Errorful rule") {
 
 	const char *axiom = "F-F-F-F";
 	{
-		DOLSystem s(axiom, {"F->FF"});
+		LSystem s(axiom, {"F->FF"});
 
 		/* the rule should fail to add because the is no '=>' in it.*/
 		CHECK(s.GetNumRules() == 0);
@@ -28,14 +28,14 @@ TEST_CASE("DOL System Basic") {
 
     const char *axiom = "F-F-F-F";
     {
-        DOLSystem s(axiom, DOLSystem::svector());
+        LSystem s(axiom, LSystem::svector());
         CHECK(strcmp(s.GetState(), axiom) == 0);
 		CHECK(s.GetGeneration() == 0);
     }
 
     {
         const char *rule = "F=>F-F+F+FF-F-F+F";
-        DOLSystem   s(axiom, {rule});
+        LSystem   s(axiom, {rule});
         CHECK(strcmp(s.GetState(), axiom) == 0);
         CHECK(s.GetNumRules() == 1);
         CHECK(s.GetRules().at('F')[0].to == "F-F+F+FF-F-F+F");
@@ -47,8 +47,8 @@ TEST_CASE("DOL System Basic") {
 TEST_CASE("DOL System Iterate") {
 
 	const char *axiom = "b";
-	DOLSystem::svector rules = { "a=>ab", "b=>a" };
-	DOLSystem   s(axiom, rules);
+	LSystem::svector rules = { "a=>ab", "b=>a" };
+	LSystem   s(axiom, rules);
 
 	s.Iterate();
 	CHECK(s.GetGeneration() == 1);
@@ -77,8 +77,8 @@ TEST_CASE("DOL System Iterate") {
 TEST_CASE("DOL System Multi Iterate") {
 
 	const char *axiom = "b";
-	DOLSystem::svector rules = { "a=>ab", "b=>a" };
-	DOLSystem   s(axiom, rules);
+	LSystem::svector rules = { "a=>ab", "b=>a" };
+	LSystem   s(axiom, rules);
 
 	s.Iterate(5);
 	CHECK(s.GetGeneration() == 5);
@@ -88,13 +88,13 @@ TEST_CASE("DOL System Multi Iterate") {
 TEST_CASE("Stochastic LSystems") {
 
 	const char *axiom = "b";
-	DOLSystem::svector rules = { 
+	LSystem::svector rules = { 
 		"a=10>ab", 
 		"a=90>abb", 
 		
 		"b=>a" };
 
-	DOLSystem   s(axiom, rules);
+	LSystem   s(axiom, rules);
 	CHECK(s.GetRules().at('a')[0].prob == 0.1f);
 	CHECK(s.GetRules().at('a')[1].prob == 0.9f);
 	CHECK(s.GetRules().at('b')[0].prob == 1.0f);
@@ -103,7 +103,7 @@ TEST_CASE("Stochastic LSystems") {
 TEST_CASE("Context Sensitive LSystems") {
 
 	const char *axiom = "b";
-	DOLSystem::svector rules = { "a=>ab", "b=>a" };
+	LSystem::svector rules = { "a=>ab", "b=>a" };
 	const char *ignore = "+-";
-	DOLSystem   s(axiom, rules, ignore);
+	LSystem   s(axiom, rules, ignore);
 }

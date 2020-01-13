@@ -1,5 +1,5 @@
 
-#include "dolsystem.h"
+#include "lsystem.h"
 #include <regex>
 #include <chrono>
 #include <iostream>
@@ -7,7 +7,7 @@
 namespace exunit {
 namespace lsystem {
 
-DOLSystem::DOLSystem(const char *axiom, const svector &rules, const char *contextignore) : mState(axiom) {
+LSystem::LSystem(const char *axiom, const svector &rules, const char *contextignore) : mState(axiom) {
 
 	if (contextignore) {
         mContextIgnore = contextignore;
@@ -21,10 +21,10 @@ DOLSystem::DOLSystem(const char *axiom, const svector &rules, const char *contex
     BuildRules(rules);
 }
 
-DOLSystem::~DOLSystem() {
+LSystem::~LSystem() {
 }
 
-bool DOLSystem::ApplyRuleSet(const rvector &rules) {
+bool LSystem::ApplyRuleSet(const rvector &rules) {
 	size_t numrules = rules.size();
 
 	//if there were no rules then we can't apply anything!
@@ -59,7 +59,7 @@ bool DOLSystem::ApplyRuleSet(const rvector &rules) {
 	return true;
 }
 
-void DOLSystem::Iterate(uint32_t n) {
+void LSystem::Iterate(uint32_t n) {
 
     while (n--) {
         string state = mState;
@@ -85,7 +85,7 @@ void DOLSystem::Iterate(uint32_t n) {
     }
 }
 
-void DOLSystem::BuildRules(const svector &rules) {
+void LSystem::BuildRules(const svector &rules) {
 
 	//looking for CHAR=DD>TOSTRING
 	//for example: "a=10>ab" or "a=>ab"

@@ -1,5 +1,5 @@
 
-#include "dolsystem.h"
+#include "lsystem.h"
 #include "pngturtle.h"
 #include "modelturtle.h"
 #include "boundsturtle.h"
@@ -80,7 +80,7 @@ void DoBasicDOL(int width, int height, int startx, int starty, int iterations) {
 	};
 
 	for (const auto &b : basics) {
-		exunit::lsystem::DOLSystem system(b.axiom, b.rules);
+		exunit::lsystem::LSystem system(b.axiom, b.rules);
 		system.Iterate(b.itererations);
 
 		const float branchlength = 10.0f;
@@ -130,7 +130,7 @@ void DoBranching(int width, int height, int iterations) {
         turtle.SetPenColor(255, 0, 0);
 
         // plant (1.24a)
-        exunit::lsystem::DOLSystem system(plant.axiom, plant.rules);
+        exunit::lsystem::LSystem system(plant.axiom, plant.rules);
 
         system.Iterate(plant.itererations);
 		turtle.SetPenPos(width >> 1, height);
@@ -179,7 +179,7 @@ void Do3D(int startx, int starty, int iterations) {
         ModelTurtle turtle(startx, starty, plant.branchangle, plant.branchlength);
         turtle.SetPenColor(244, 173, 11);
 
-        exunit::lsystem::DOLSystem system(plant.axiom, plant.rules);
+        exunit::lsystem::LSystem system(plant.axiom, plant.rules);
 
         system.Iterate(plant.itererations);
         turtle.Render(system.GetState());
@@ -192,7 +192,7 @@ void DoStoachasticDOL(int width, int height) {
 		PNGTurtle turtle(width, height, 0, 0, 25.7f, 5.0f);
 		turtle.SetPenColor(255, 0, 0);
 
-		exunit::lsystem::DOLSystem system("F", {
+		exunit::lsystem::LSystem system("F", {
 				"F=33>F[+F]F[-F]F",
 				"F=33>F[+F][F]",
 				"F=34>F[-F]F"

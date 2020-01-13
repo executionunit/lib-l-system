@@ -12,7 +12,7 @@ namespace lsystem {
 /**
 ** Deterministic Context Free L-System.
 */
-class DOLSystem {
+class LSystem {
 public:
     using string = XLSYS_STRING;
 
@@ -36,8 +36,8 @@ public:
     ** @param rules a vector of rules of the form X=>X' eg: {"F=>FS", "S=>F"}
     ** @param contextignore string of tokens(characters) to be ignored when scoping context. eg: "+-"
     */
-    DOLSystem(const char *axiom, const svector &rules, const char *contextignore = nullptr);
-    ~DOLSystem();
+    LSystem(const char *axiom, const svector &rules, const char *contextignore = nullptr);
+    ~LSystem();
 
     void Iterate(uint32_t n = 1);
 

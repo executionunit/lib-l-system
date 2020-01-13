@@ -1,7 +1,7 @@
 
 set(LSYSTEM_LIB_SRCS
-    dolsystem.h
-    dolsystem.cpp
+    lsystem.h
+    lsystem.cpp
 
     lsystemlibconfig.h
 )
