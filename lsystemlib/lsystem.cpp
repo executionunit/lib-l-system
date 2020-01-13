@@ -39,21 +39,18 @@ bool LSystem::ApplyRuleSet(const rvector &rules) {
 	}
 
 	//get a random number from 0-1
-	//int ruleidx = 0;
 	float p = mNumGen(mRNG);
 	for (const auto &r : rules) {
 		if (p <= r.prob) {
-			mState = mState + r.to;
-			//std::cout << ruleidx << '\n';
+			mState.append(r.to);
 			return true;
 		}
 		p -= r.prob;
-		//++ruleidx;
 	}
 
 	//we fell through, probably because the rules
 	//probabilites didn't add up to one!
-	mState = mState + rules.back().to;
+	mState.append(rules.back().to);
 	XLSYS_REPORT_ERROR("Stocastic rule overrun");
 	
 	return true;
@@ -62,8 +59,15 @@ bool LSystem::ApplyRuleSet(const rvector &rules) {
 void LSystem::Iterate(uint32_t n) {
 
     while (n--) {
-        string state = mState;
-        mState.clear();
+		//swap the old state in to state so we can
+		//update mState
+		string state;
+		std::swap(mState, state);
+
+		// at least this big, it's going to be a lot bigger probably
+		// but what hueristic to use?
+		mState.reserve(state.size()); 
+        
 
         const char *s = state.c_str();
         while (*s != '\0') {
@@ -76,7 +80,7 @@ void LSystem::Iterate(uint32_t n) {
 			}
 
             if (!ruleapplied) {
-                mState = mState + *s;
+                mState.push_back(*s);
             }
             ++s;
         }
