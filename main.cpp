@@ -192,7 +192,6 @@ void DoStoachasticDOL(int width, int height) {
 		PNGTurtle turtle(width, height, 0, 0, 25.7f, 5.0f);
 		turtle.SetPenColor(255, 0, 0);
 
-		// plant (1.24a)
 		exunit::lsystem::DOLSystem system("F", {
 				"F=33>F[+F]F[-F]F",
 				"F=33>F[+F][F]",
