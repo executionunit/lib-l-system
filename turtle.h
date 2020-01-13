@@ -8,6 +8,9 @@
 #include "glm/ext/quaternion_common.hpp"
 #include "glm/ext/vector_float3.hpp"
 
+/**
+** Base class for all Turtles.
+*/
 class Turtle {
 public:
     using vec3 = glm::vec3;

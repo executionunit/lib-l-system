@@ -4,6 +4,10 @@
 #include "turtle.h"
 #include <memory>
 
+/**
+** Turtle that knows how to render to a fixed size RGB canvas and
+** then save as a PNG.
+*/
 class PNGTurtle : public Turtle {
 public:
     static constexpr int numplanes() {

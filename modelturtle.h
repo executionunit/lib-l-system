@@ -5,7 +5,9 @@
 #include <memory>
 
 
-
+/**
+** Turtle that knows how to build a 3D model and save it as a PLY file.
+*/
 class ModelTurtle : public Turtle {
 public:
 

@@ -7,6 +7,12 @@
 #include "glm/glm.hpp"
 #include <numeric>
 
+/**
+** Turtle which just records the min and max position of the pen
+** so that the bounds of the rendered LSystem can be ascertained.
+** Is there a clever mathematical way to do this? I can't think 
+** of anything.
+*/
 class BoundsTurtle : public Turtle {
 public:
 
