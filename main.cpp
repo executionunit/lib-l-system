@@ -105,7 +105,7 @@ void DoBasicDOL(int width, int height, int startx, int starty, int iterations) {
 	}
 }
 
-void DoBranching(int width, int height, int startx, int starty, int iterations) {
+void DoBranching(int width, int height, int iterations) {
 
     struct System {
         const char *             axiom;
@@ -126,15 +126,15 @@ void DoBranching(int width, int height, int startx, int starty, int iterations) 
 
     for (const auto plant : Plants) {
 
-        PNGTurtle turtle(width, height, startx, starty, plant.branchangle, plant.branchlength);
+        PNGTurtle turtle(width, height, 0, 0, plant.branchangle, plant.branchlength);
         turtle.SetPenColor(255, 0, 0);
 
         // plant (1.24a)
         exunit::lsystem::DOLSystem system(plant.axiom, plant.rules);
 
         system.Iterate(plant.itererations);
-        // turtle.Turn(glm::radians(0.0f));
-        turtle.SetPenPos(width >> 1, 0, 100);
+		turtle.SetPenPos(width >> 1, height);
+		turtle.SetAngle(180.0f);
         turtle.Render(system.GetState());
         turtle.Save(plant.filename);
     }
@@ -182,10 +182,30 @@ void Do3D(int startx, int starty, int iterations) {
         exunit::lsystem::DOLSystem system(plant.axiom, plant.rules);
 
         system.Iterate(plant.itererations);
-        turtle.SetAngle(-90);
         turtle.Render(system.GetState());
         turtle.Save(plant.filename);
     }
+}
+void DoStoachasticDOL(int width, int height) {
+
+	for (int i = 0; i < 5; i++) {
+		PNGTurtle turtle(width, height, 0, 0, 25.7f, 5.0f);
+		turtle.SetPenColor(255, 0, 0);
+
+		// plant (1.24a)
+		exunit::lsystem::DOLSystem system("F", {
+				"F=33>F[+F]F[-F]F",
+				"F=33>F[+F][F]",
+				"F=34>F[-F]F"
+			}
+		);
+
+		system.Iterate(6);
+		turtle.SetPenPos(width >> 1, height - 100);
+		turtle.SetAngle(180.0f);
+		turtle.Render(system.GetState());
+		turtle.Save((std::string("stochastic_plant") + std::to_string(i) + ".png").c_str());
+	}
 }
 
 void DoOBJTurtle() {
@@ -224,7 +244,9 @@ int main(int argc, char **argv) {
     int iterations = result["iterations"].as<int>();
 
     DoBasicDOL(width, height, startx, starty, iterations);
-    DoBranching(width, height, startx, starty, iterations);
+    DoBranching(width, height, iterations);
     Do3D(startx, starty, iterations);
+	DoStoachasticDOL(width, height);
+
     DoOBJTurtle();
 }

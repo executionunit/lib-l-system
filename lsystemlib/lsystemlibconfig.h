@@ -20,6 +20,11 @@
 #define XLSYS_STRING std::string
 #endif
 
+#ifndef XLSYS_UMAP
+#include <unordered_map>
+#define  XLSYS_UMAP std::unordered_map
+#endif
+
 #ifndef XLSYS_REPORT_ERROR
 #define XLSYS_REPORT_ERROR(msg) printf("ERROR: %s\n", msg);
 #endif

@@ -4,6 +4,7 @@
 #include "lsystemlibconfig.h"
 
 #include <stdint.h>
+#include <random>
 
 namespace exunit {
 namespace lsystem {
@@ -15,24 +16,27 @@ class DOLSystem {
 public:
     using string = XLSYS_STRING;
 
+	/* a vector of strings */
+	using svector = XLSYS_VECTOR<string>;
+
     /* rule transform */
     struct Rule {
-        string from;
+		float prob;
         string to;
     };
 
+	using rvector = XLSYS_VECTOR<Rule>;
+
     /* a vector of rules */
-    using rvector = XLSYS_VECTOR<Rule>;
+    using rmap = XLSYS_UMAP<char, rvector>;
 
-    /* a vector of strings */
-    using svector = XLSYS_VECTOR<XLSYS_STRING>;
 
-	/**
-	** @param axiom the starting condition of the system eg: "F"
-	** @param rules a vector of rules of the form X=>X' eg: {"F=>FS", "S=>F"}
-	** @param contextignore string of tokens(characters) to be ignored when scoping context. eg: "+-"
-	*/
-	DOLSystem(const char *axiom, const svector &rules, const char *contextignore = nullptr);
+    /**
+    ** @param axiom the starting condition of the system eg: "F"
+    ** @param rules a vector of rules of the form X=>X' eg: {"F=>FS", "S=>F"}
+    ** @param contextignore string of tokens(characters) to be ignored when scoping context. eg: "+-"
+    */
+    DOLSystem(const char *axiom, const svector &rules, const char *contextignore = nullptr);
     ~DOLSystem();
 
     void Iterate(uint32_t n = 1);
@@ -46,7 +50,7 @@ public:
     uint32_t GetNumRules() const {
         return (uint32_t)mRules.size();
     }
-    const rvector &GetRules() const {
+    const rmap &GetRules() const {
         return mRules;
     }
     void BuildRules(const svector &rules);
@@ -56,10 +60,16 @@ public:
     }
 
 private:
-    rvector  mRules;
+    rmap     mRules;
     string   mState;
-	string   mContextIgnore; /*< tokens to ignore when context matching.*/
+    string   mContextIgnore; /*< tokens to ignore when context matching.*/
     uint32_t mGeneration{0};
+
+	std::mt19937_64 mRNG;
+	std::uniform_real_distribution<float> mNumGen{ 0, 1 };
+
+	bool ApplyRuleSet(const rvector &rules);
+
 };
 
 } // namespace lsystem

@@ -38,8 +38,7 @@ TEST_CASE("DOL System Basic") {
         DOLSystem   s(axiom, {rule});
         CHECK(strcmp(s.GetState(), axiom) == 0);
         CHECK(s.GetNumRules() == 1);
-        CHECK(s.GetRules()[0].from == "F");
-		CHECK(s.GetRules()[0].to == "F-F+F+FF-F-F+F");
+        CHECK(s.GetRules().at('F')[0].to == "F-F+F+FF-F-F+F");
 		CHECK(s.GetGeneration() == 0);
     }
 }
@@ -84,6 +83,21 @@ TEST_CASE("DOL System Multi Iterate") {
 	s.Iterate(5);
 	CHECK(s.GetGeneration() == 5);
 	CHECK(strcmp(s.GetState(), "abaababa") == 0);
+}
+
+TEST_CASE("Stochastic LSystems") {
+
+	const char *axiom = "b";
+	DOLSystem::svector rules = { 
+		"a=10>ab", 
+		"a=90>abb", 
+		
+		"b=>a" };
+
+	DOLSystem   s(axiom, rules);
+	CHECK(s.GetRules().at('a')[0].prob == 0.1f);
+	CHECK(s.GetRules().at('a')[1].prob == 0.9f);
+	CHECK(s.GetRules().at('b')[0].prob == 1.0f);
 }
 
 TEST_CASE("Context Sensitive LSystems") {
