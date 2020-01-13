@@ -26,7 +26,7 @@ public:
 
     void SetAngle(float degrees);
     void SetPenPos(int x, int y, int z = 0);
-    void MoveForward();
+    void MoveForward(uint32_t steps = 1);
 
     void Roll(float rads);
     void Turn(float rads);

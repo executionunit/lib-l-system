@@ -150,16 +150,28 @@ void Do3D(int startx, int starty, int iterations) {
         const char *             filename;
 
     } systems[] = {
-        //{"F+F+F+F", {R"(X=>^\XF^\XFX-F^//XFX&F+//XFX-F/X-/)"}, 0, 90, 10.0f, "3dtest1.ply"},
-        //{"^F+F+F+F", {R"(X=>^\XF^\XFX-F^//XFX&F+//XFX-F/X-/)"}, 0, 90, 10.0f, "3dtest2.ply"},
-        //{"F/F/F/F", {R"(X=>^\XF^\XFX-F^//XFX&F+//XFX-F/X-/)"}, 0, 90, 10.0f, "3dtest3.ply"},
-        {"A",
-         {R"(A=>B-F+CFC+F-D&F^D-F+&&CFC+F+B//)", R"(B=>A&F^CFB^F^D^^-F-D^|F^B|FC^F^A//)",
-          R"(C=>|D^|F^B-F+C^F^A&&FA&F^C+F+B^F^D//)", R"(D=>|CFB-F+B|FA&F^A&&FB-F+B|FC//)"},
-         3,
-         90,
-         10.0f,
-         "hilbert3d.ply"},
+        {
+			"A",
+			 {R"(A=>B-F+CFC+F-D&F^D-F+&&CFC+F+B//)", R"(B=>A&F^CFB^F^D^^-F-D^|F^B|FC^F^A//)",
+			  R"(C=>|D^|F^B-F+C^F^A&&FA&F^C+F+B^F^D//)", R"(D=>|CFB-F+B|FA&F^A&&FB-F+B|FC//)"},
+			 3,
+			 90,
+			 10.0f,
+			 "hilbert3d.ply"
+		},
+		{
+			"A",
+			{
+				"A=>[&FL!A]/////'[&FL!A]///////'[&FL!A]",
+				"F=>S ///// F",
+				"S=>FL",
+				"L=>"
+			},
+			7,
+			22.5f,
+			0.5f,
+			"bush_1.25.ply"
+		}
     };
 
     for (const auto plant : systems) {

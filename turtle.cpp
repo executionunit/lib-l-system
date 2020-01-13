@@ -31,11 +31,11 @@ void Turtle::SetAngle(float degrees) {
 	mPenStack.back().SetZRot(degrees);
 }
 
-void Turtle::MoveForward() {
+void Turtle::MoveForward(uint32_t steps) {
 
     auto &pen = mPenStack.back();
 
-    vec3 newpos = pen.pos + pen.angle * vec3(0, mEdgeLength, 0);
+    vec3 newpos = pen.pos + pen.angle * vec3(0, mEdgeLength * steps, 0);
 
     if (pen.pendown) {
         DrawLine( (pen.pos + mOffset) * mScale, (newpos + mOffset)* mScale, pen.rgb);
@@ -116,13 +116,18 @@ void Turtle::Render(const char *s) {
 	}
 
 	while (*s != '\0') {
-		char c = *s;
+		char c = *s++;
 
 		switch (c) {
 		case 'I':/* deliberate fallthrough */
-		case 'F':
-			MoveForward();
-			break;
+		case 'F': {
+			int cnt = 1;
+			while ( *s == 'F' || *s == 'I' ) {
+				++cnt;
+				++s;
+			}
+			MoveForward(cnt);
+		}break;
 		case 'f':
 			PenUp();
 			MoveForward();
@@ -157,6 +162,6 @@ void Turtle::Render(const char *s) {
 			break;
 		}
 
-		++s;
+		
 	}
 }
