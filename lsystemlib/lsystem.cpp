@@ -24,7 +24,12 @@ LSystem::LSystem(const char *axiom, const svector &rules, const char *contextign
 LSystem::~LSystem() {
 }
 
-bool LSystem::ApplyRuleSet(const rvector &rules) {
+/*
+* @rules the rules to apply to the state
+* @spos the current position in the old state we are processing
+* @start the start of the old state.
+*/
+bool LSystem::ApplyRuleSet(const rvector &rules, const char *spos, const char *sstart) {
 	size_t numrules = rules.size();
 
 	//if there were no rules then we can't apply anything!
@@ -32,10 +37,12 @@ bool LSystem::ApplyRuleSet(const rvector &rules) {
 		return false;
 	}
 
-	//if there is only one rule then just apply it.
-	if (numrules == 1) {
-		mState = mState + rules[0].to;
-		return true;
+	//process context sensitive rules first if there are any
+	//should probably optimize this?
+	for (const auto &r : rules) {
+		if (r.is_context_sensitive()) {
+			
+		}
 	}
 
 	//get a random number from 0-1
@@ -61,6 +68,9 @@ void LSystem::Iterate(uint32_t n) {
     while (n--) {
 		//swap the old state in to state so we can
 		//update mState
+		//TODO just allocate a big ass buffer and split
+		// it in to two here rather than allocate memory
+		// for a string.
 		string state;
 		std::swap(mState, state);
 
@@ -76,7 +86,7 @@ void LSystem::Iterate(uint32_t n) {
 			const auto &i = mRules.find(*s);
 			if (i != mRules.end()) {
 				const auto &rules = i->second;
-				ruleapplied = ApplyRuleSet(rules);
+				ruleapplied = ApplyRuleSet(rules, s, state.c_str());
 			}
 
             if (!ruleapplied) {
@@ -118,10 +128,19 @@ void LSystem::BuildRules(const svector &rules) {
 				//we got one with a percent!
 				percent = strtol(match[3].str().c_str(), nullptr, 10) / 100.0f;
 			}
-			mRules[from[0]].push_back({ percent, to });
+			mRules[from[0]].push_back(Rule{to, percent });
 		}
 	}
 }
+
+bool LSystem::Rule::precond_match(const char *spos, const char *sstart)const noexcept {
+	return false;
+}
+
+bool LSystem::Rule::postcond_match(const char *spos, const char *sstart)const noexcept {
+	return false;
+}
+
 
 } // namespace lsystem
 } // namespace exunit
