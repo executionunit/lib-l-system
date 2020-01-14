@@ -7,7 +7,7 @@ set(LSYSTEM_LIB_SRCS
 )
 
 if(LSYSTEM_BUILD_TESTS)
-    set(LSYSTEM_TEST_SRCS test_dolsystem.cpp)
+    set(LSYSTEM_TEST_SRCS test_lsystem.cpp)
 endif()
 
 add_library(lsystemlib ${LSYSTEM_LIB_SRCS})
