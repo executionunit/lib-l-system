@@ -38,6 +38,7 @@ if(LSYSTEM_BUILD_EXE)
 
     add_executable(lsystemexe_tests ${LSYSTEM_EXE_TEST_SRCS})
     target_link_libraries(lsystemexe_tests doctest::doctest lsystemlib glm::glm)
+    set_target_properties(lsystemexe_tests PROPERTIES FOLDER "unittests" )
 
 endif()
 
