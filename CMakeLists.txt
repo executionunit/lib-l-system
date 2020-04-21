@@ -36,9 +36,12 @@ if(LSYSTEM_BUILD_EXE)
     target_link_libraries(lsystemexe ${LSYSTEM_EXE_LIBS})
     target_include_directories(lsystemexe PRIVATE "tp/stb")
 
-    add_executable(lsystemexe_tests ${LSYSTEM_EXE_TEST_SRCS})
-    target_link_libraries(lsystemexe_tests doctest::doctest lsystemlib glm::glm)
-    set_target_properties(lsystemexe_tests PROPERTIES FOLDER "unittests" )
+    if(LSYSTEM_BUILD_TESTS)
+        add_executable(lsystemexe_tests ${LSYSTEM_EXE_TEST_SRCS})
+        target_link_libraries(lsystemexe_tests doctest::doctest lsystemlib glm::glm)
+        set_target_properties(lsystemexe_tests PROPERTIES FOLDER "unittests" )
+    endif()
+
 
 endif()
 
