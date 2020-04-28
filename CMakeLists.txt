@@ -45,3 +45,11 @@ if(LSYSTEM_BUILD_EXE)
 
 endif()
 
+add_custom_target (MiscFiles SOURCES
+    README.md
+    LICENSE
+    .clang-format
+    .clang-tidy
+    .gitignore
+    .gitattributes
+)
