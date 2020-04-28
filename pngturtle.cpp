@@ -24,9 +24,9 @@ void PNGTurtle::Clear() {
 
     for (uint32_t y = 0; y < mHeight; ++y) {
         for (uint32_t x = 0; x < mWidth; ++x) {
-            *d++ = 0;
-            *d++ = 0;
-            *d++ = 0;
+            *d++ = 255;
+            *d++ = 255;
+            *d++ = 255;
         }
     }
 }
